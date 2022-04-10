@@ -24,19 +24,19 @@ public class UserServiceImpl implements UserService {
     String grant_type = "authorization_code";
 
     @Override
-    public User login(String code) throws IOException {
+    public String login(String code) throws IOException {
         String authUrl = String.format("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=%s", appId, secret, code, grant_type);
         Request request = new Request.Builder().url(authUrl).build();
         Response response = client.newCall(request).execute();
         String openid = JSON.parseObject(Objects.requireNonNull(response.body()).string(), IResponse.class).openid;
         if (userRepository.existsById(openid)) {
-            return userRepository.findById(openid);
+            return openid;
         }
         User user = new User();
         user.setId(openid);
         user.setName(newRandomName());
         userRepository.save(user);
-        return user;
+        return user.getId();
     }
 
     public String newRandomName() {

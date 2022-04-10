@@ -40,6 +40,10 @@ public class ProductServiceImpl implements ProductService {
         return id;
     }
 
+    public void update(Product product) {
+        productRepository.save(product);
+    }
+
     public void delete(int id) {
         productRepository.deleteById(id);
     }
